@@ -27,7 +27,25 @@ If you use or adapt this workflow, please give credit to this repository.
 
 ## Requirements  
 - R (version >= 4.0)  
-- R packages: Seurat, Harmony, SingleR, and dependencies (see tutorial for details)  
+- R packages: Seurat, Harmony, SingleR, and dependencies (see tutorial for details)
+
+## Data Source
+
+The dataset used in this tutorial was obtained from a publicly available single-cell RNA-seq study on breast cancer:
+
+**Luo L., Yang P., Mastoraki S., et al.**  
+*Single-cell RNA sequencing identifies molecular biomarkers predicting late progression to CDK4/6 inhibition in patients with HR+/HER2- metastatic breast cancer.*  
+**Molecular Cancer**, 2025.  
+PMID: [39955556](https://pubmed.ncbi.nlm.nih.gov/39955556/) | PMCID: [PMC11829392](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11829392/) | DOI: [10.1186/s12943-025-02226-9](https://doi.org/10.1186/s12943-025-02226-9)
+
+The raw data is available through the Gene Expression Omnibus (GEO):  
+**GEO Series Accession**: [GSE262288](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE262288)
+
+For this tutorial, two samples were used:
+- **GSM8162620** — Patient 3 ascites scRNA-seq sample 1  
+- **GSM8162621** — Patient 3 ascites scRNA-seq sample 2  
+
+These samples were selected to demonstrate the functionality of the workflow.
 
 ## How to Use  
 1. Clone or download this repository.  
