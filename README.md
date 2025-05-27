@@ -52,6 +52,12 @@ This tutorial is licensed under the [MIT License](LICENSE). You are free to use,
 This workflow and tutorial were developed by Sai Harshitha Muddamsetty, 2025. Please cite or credit this repository if you use or adapt this work in your research or teaching.
 
 ---
+## Contact
+
+For questions, feedback, or collaboration, feel free to reach out:
+
+- Email: harshithamuddamsetty@gamil.com  
+- GitHub: [Harshitha-MI](https://github.com/Harshitha-MI)
 
 If you have questions or feedback, please feel free to open an issue or contact me.
 
