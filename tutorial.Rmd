@@ -1,0 +1,213 @@
+---
+title: "scRNA-seq Analysis Workflow"
+subtitle: "A step-by-step tutorial using Seurat, Harmony, and SingleR"
+author: "Sai Harshitha Muddamsetty"
+date: "2025-05-27"
+output: html_document
+---
+
+## Setup
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Install Required Packages
+
+If you don't have the required packages installed, you can run the following code chunks to install them.
+
+### Install CRAN packages
+```{r install-cran, eval=FALSE}
+install.packages(c("dplyr", "Seurat", "patchwork", "harmony", "tidyverse", "ggplot2"))
+```
+###Install Bioconductor packages
+```{r install-bioc-packages, eval=FALSE}
+BiocManager::install(c("celldex", "SingleR", "scran"))
+```
+
+## Load Required Packages
+``` {r load-libraries, message=FALSE, warning=FALSE}
+
+#Load necessary libraries for scRNA-seq analysis
+library(dplyr)
+library(Seurat)
+library(patchwork)
+library(harmony)
+library(tidyverse)
+library(ggplot2)
+library(celldex)
+library(SingleR)
+library(scran)
+```
+
+## Load Sample Data
+
+Make sure your data folders contain the files named exactly as barcodes.tsv, features.tsv, and matrix.mtx because Read10X() expects these filenames.
+```{r load-data}
+# Load sample data using Read10X; adjust paths to where your files are stored
+sam1 <- Read10X("~/Documents/Drive G/Personal Project/sc_RNAseq tutorial/sample/sample_1")
+sam2 <- Read10X("~/Documents/Drive G/Personal Project/sc_RNAseq tutorial/sample/sample_2")
+```
+
+## Convert the Files into Seurat Objects
+
+Convert the raw data matrices into Seurat objects with minimum filtering criteria.
+```{r}
+sam1 <- CreateSeuratObject(counts = sam1, min.cells = 3, min.features = 200, project = "sam1")
+sam2 <- CreateSeuratObject(counts = sam2, min.cells= 3, min.features = 200, project ="sam2")
+```
+
+## Calculate Mitochondrial Gene Percentage
+
+```{r}
+sam1[["percent.mt"]] <- PercentageFeatureSet(sam1, pattern = "^MT-")
+sam2[["percent.mt"]] <- PercentageFeatureSet(sam2, pattern = "^MT-")
+
+# Uncomment to view metadata in RStudio's viewer
+# View(sam1@meta.data)
+# View(sam2@meta.data)
+```
+
+### Visualize QC Metrics Before Filtering
+
+```{r pre-qc-vlnplot, echo=TRUE, message=FALSE, warning=FALSE}
+#Violin Plots of QC Metrics
+VlnPlot(sam1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) 
+VlnPlot(sam2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) 
+```
+Note: These violin plots help assess data quality and guide you in determining appropriate parameters for quality control (QC) filtering.
+
+## Perform Quality Control (QC) Filtering
+
+Here we subset the data to keep cells with:
+
+- Number of detected features (genes) between 200 and 6500  
+- Mitochondrial gene percentage below 15%
+```{r perform-qc}
+sam1 <- subset(sam1, subset = nFeature_RNA > 200 & nFeature_RNA < 6500 & percent.mt < 15)
+sam2 <- subset(sam2, subset = nFeature_RNA > 200 & nFeature_RNA < 6500 & percent.mt < 15)
+```
+
+### Visualize QC Metrics After Filtering
+
+The violin plots below show the distribution of features, counts, and mitochondrial content after QC filtering.
+```{r post-qc-vlnplot, echo=TRUE, message=FALSE, warning=FALSE}
+# Violin plots after QC filtering
+VlnPlot(sam1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+VlnPlot(sam2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+```
+## Merge Samples
+
+Now that QC has been performed on each sample individually, we merge them into one Seurat object for downstream processing.
+```{r}
+Merged_sam <- merge(sam1, sam2, add.cell.ids = c("sam1", "sam2"), project = "Merged_sam")
+```
+
+##Pre-processing
+
+```{r pre-processing, echo=TRUE, message=FALSE, warning=FALSE}
+# Normalize the merged data
+Merged_sam <- NormalizeData(Merged_sam, verbose = FALSE)
+
+# Identify 2000 highly variable features
+Merged_sam <- FindVariableFeatures(Merged_sam, selection.method = "vst", nfeatures = 2000, verbose = FALSE)
+
+# Scale the data
+Merged_sam <- ScaleData(Merged_sam, verbose = FALSE)
+```
+
+##Principal Component Analysis (PCA)
+We now perform PCA on the merged dataset to reduce dimensionality and visualize variance across principal components.
+```{r PCA, echo=TRUE, message=FALSE, warning=FALSE}
+# Run PCA on the merged object
+Merged_sam <- RunPCA(Merged_sam, verbose = FALSE)
+
+# PCA plots
+DimPlot(Merged_sam, reduction = "pca")
+DimPlot(Merged_sam, reduction = "pca", dims = c(1, 5))
+
+# Visualize PCA loadings
+VizDimLoadings(Merged_sam, dims = 1:2, reduction = "pca")
+```
+## Run UMAP Before Harmony Integration
+
+```{r umap-before-harmony, echo=TRUE, message=FALSE, warning=FALSE}
+Merged_sam <- RunUMAP(Merged_sam, reduction = "pca", dims = 1:30, verbose = FALSE)
+plot1 <- DimPlot(Merged_sam, reduction = "umap", group.by = "orig.ident", pt.size = 0.5) +
+  ggtitle("UMAP Before Harmony Integration")
+```
+
+## Run Harmony Integration
+
+```{r harmony-integration, echo=TRUE, message=FALSE, warning=FALSE}
+options(repr.plot.height = 2.5, repr.plot.width = 6)
+Merged_sam <- RunHarmony(Merged_sam, "orig.ident", plot_convergence = TRUE, verbose = FALSE)
+```
+
+## Run UMAP After Harmony Integration
+
+```{r umap-after-harmony, echo=TRUE, message=FALSE, warning=FALSE}
+Merged_sam <- RunUMAP(Merged_sam, reduction = "harmony", dims = 1:30,
+                      reduction.name = "umap.harmony", verbose = FALSE)
+plot2 <- DimPlot(Merged_sam, reduction = "umap.harmony", group.by = "orig.ident", pt.size = 0.5) +
+  ggtitle("UMAP After Harmony Integration")
+
+plot1 + plot2
+```
+### Run Clustering
+
+We use the Harmony reduction for neighbor detection and clustering. The `resolution` parameter controls cluster granularity:  
+- Higher resolution (e.g., 0.5) gives more clusters (finer granularity)  
+- Lower resolution (e.g., 0.1) gives fewer clusters (coarser granularity)
+```{r run-clustering, echo=TRUE, message=FALSE, warning=FALSE}
+Merged_sam <- FindNeighbors(Merged_sam, reduction = "harmony", dims = 1:30, verbose = FALSE)
+Merged_sam <- FindClusters(Merged_sam, resolution = 0.5, verbose = FALSE)
+Merged_sam <- FindClusters(Merged_sam, resolution = 0.1, verbose = FALSE)
+
+# Visualize clusters based on the lower-resolution clustering
+DimPlot(Merged_sam, reduction = "umap.harmony",
+  group.by = "RNA_snn_res.0.1", label.size = 2)
+```
+
+## Find Marker Genes
+
+### Join Layers
+
+We use JoinLayers() to consolidate data layers within the Seurat object. This ensures all assay-related information is accessible for downstream functions such as FindAllMarkers() and differential expression analysis, especially if the object was previously split or had multiple layers (e.g., when processed with newer Seurat versions or spatial datasets).
+```{r join-layers, echo=TRUE, message=FALSE, warning=FALSE}
+Merged_sam <- JoinLayers(Merged_sam)
+```
+
+### Find Cluster-Specific Marker Genes
+
+We identify marker genes that are upregulated in each cluster using FindAllMarkers().
+```{r run-findallmarkers, echo=TRUE, message=FALSE, warning=FALSE}
+Merged_sam.markers <- FindAllMarkers(Merged_sam, only.pos = TRUE, verbose = FALSE)
+```
+
+### Filter Upregulated Marker Genes (avg_log2FC > 1)
+
+We retain genes with an average log2 fold change > 1 and extract the top 10 upregulated genes per cluster.
+```{r run-clustering, echo=TRUE, message=FALSE, warning=FALSE}
+top_markers <- Merged_sam.markers %>%
+  group_by(cluster) %>%
+  dplyr::filter(avg_log2FC > 1)
+
+write.csv(top_markers, file = "top_markers.csv", row.names = FALSE)
+
+top10 <- Merged_sam.markers %>%
+  group_by(cluster) %>%
+  dplyr::filter(avg_log2FC > 1) %>%
+  slice_head(n = 10) %>%
+  ungroup()
+```
+
+### Visualize Marker Gene Expression
+We visualize the expression of selected upregulated genes across clusters using FeaturePlot and summarize the expression of top 10 marker genes per cluster with a heatmap.
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Feature plots for selected upregulated genes
+FeaturePlot(Merged_sam, features = c("S100P", "SLC11A1", "C1R", "KLRB1", "TRAC", 
+                                     "NUSAP1", "HLA-DQB2", "TCL1A"))
+# Heatmap of top 10 upregulated marker genes per cluster
+DoHeatmap(Merged_sam, features = top10$gene) + NoLegend()
+```
+
