@@ -59,6 +59,7 @@ Please download the data directly from the Gene Expression Omnibus (GEO) at:
 For this tutorial, each sample's data should be stored in its own separate folder.
 
 **Note:** You can organize these folders as you prefer, but make sure to update the file paths accordingly in the `tutorial.Rmd` script before running the analysis.
+**Also:** For the purposes of this tutorial, these two samples are treated as biological replicates, regardless of their original experimental context.
 
 ## How to Use  
 1. Clone or download this repository.  
