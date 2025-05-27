@@ -47,6 +47,19 @@ For this tutorial, two samples were used:
 
 These samples were selected to demonstrate the functionality of the workflow.
 
+## Data Download
+
+Due to file size limits, the raw scRNA-seq data matrices for samples GSM8162620 and GSM8162621 are **not included** in this repository.
+
+Please download the data directly from the Gene Expression Omnibus (GEO) at:
+
+- [GSM8162620 - Patient 3 ascites scRNA-seq sample 1](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM8162620)
+- [GSM8162621 - Patient 3 ascites scRNA-seq sample 2](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM8162621)
+
+For this tutorial, each sample's data should be stored in its own separate folder.
+
+**Note:** You can organize these folders as you prefer, but make sure to update the file paths accordingly in the `tutorial.Rmd` script before running the analysis.
+
 ## How to Use  
 1. Clone or download this repository.  
 2. Open `tutorial.Rmd` in RStudio.  
