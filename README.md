@@ -44,6 +44,7 @@ This tutorial was developed by adapting and integrating several excellent public
 - [SingleR Tutorial by BioStatSquid](https://biostatsquid.com/singler-tutorial/) for automated cell type annotation.
 
 I thank these authors for making their work openly accessible, which helped me build this integrated workflow.
+Thanks to AI assistance for brainstorming and polishing ideas
 
 ## License  
 This tutorial is licensed under the [MIT License](LICENSE). You are free to use, modify, and distribute this work, provided appropriate credit is given to the author.  
