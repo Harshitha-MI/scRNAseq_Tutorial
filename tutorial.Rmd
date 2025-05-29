@@ -270,5 +270,5 @@ DimPlot(Merged_sam, label = TRUE, repel = TRUE, label.size = 3) + NoLegend()
 ```
 ## Session Info
 ```{r session-info, echo=FALSE}
-sessionInfo()
+sessioninfo::session_info()
 ```
