@@ -268,4 +268,7 @@ Merged_sam <- AddMetaData(Merged_sam, ct_ann$pruned.labels, col.name = 'SingleR_
 Merged_sam <- SetIdent(Merged_sam, value = "SingleR_HCA")
 DimPlot(Merged_sam, label = TRUE, repel = TRUE, label.size = 3) + NoLegend()
 ```
-
+## Session Info
+```{r session-info, echo=FALSE}
+sessionInfo()
+```
