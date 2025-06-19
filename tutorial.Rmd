@@ -56,6 +56,12 @@ sam1 <- CreateSeuratObject(counts = sam1, min.cells = 3, min.features = 200, pro
 sam2 <- CreateSeuratObject(counts = sam2, min.cells= 3, min.features = 200, project ="sam2")
 ```
 
+# View metadata in RStudio's viewer
+```{r}
+View(sam1@meta.data)
+View(sam2@meta.data)
+```
+
 ## Calculate Mitochondrial Gene Percentage
 
 ```{r}
@@ -63,8 +69,8 @@ sam1[["percent.mt"]] <- PercentageFeatureSet(sam1, pattern = "^MT-")
 sam2[["percent.mt"]] <- PercentageFeatureSet(sam2, pattern = "^MT-")
 
 # Uncomment to view metadata in RStudio's viewer
-# View(sam1@meta.data)
-# View(sam2@meta.data)
+View(sam1@meta.data)
+View(sam2@meta.data)
 ```
 
 ### Visualize QC Metrics Before Filtering
@@ -119,7 +125,7 @@ Merged_sam <- ScaleData(Merged_sam, verbose = FALSE)
 We now perform PCA on the merged dataset to reduce dimensionality and visualize variance across principal components.
 ```{r PCA, echo=TRUE, message=FALSE, warning=FALSE}
 # Run PCA on the merged object
-Merged_sam <- RunPCA(Merged_sam, verbose = FALSE)
+Merged_sam <- RunPCA(Merged_sam)#, verbose = FALSE)
 
 # PCA plots
 DimPlot(Merged_sam, reduction = "pca")
@@ -134,6 +140,7 @@ VizDimLoadings(Merged_sam, dims = 1:2, reduction = "pca")
 Merged_sam <- RunUMAP(Merged_sam, reduction = "pca", dims = 1:30, verbose = FALSE)
 plot1 <- DimPlot(Merged_sam, reduction = "umap", group.by = "orig.ident", pt.size = 0.5) +
   ggtitle("UMAP Before Harmony Integration")
+plot1
 ```
 
 ## Run Harmony Integration
@@ -235,30 +242,11 @@ ct_ann <- SingleR(test = norm_counts, # alternatively use raw_counts or SingleCe
                   de.method = 'wilcox')
 ```
 
-### Explore Annotation Results
-
-```{r SingleR-results, echo=TRUE, message=FALSE, warning=FALSE}
-head(ct_ann)
-unique(ct_ann$pruned.labels)
-table(ct_ann$pruned.labels)
-
-print("All labels:")
-table(ct_ann$labels)
-
-summary(is.na(ct_ann$pruned.labels))
-```
-
-### Visualization of SingleR Scores
-
-```{r SingleR-scores, echo=TRUE, message=FALSE, warning=FALSE}
-plotScoreHeatmap(ct_ann)
-plotDeltaDistribution(ct_ann, ncol = 4, dots.on.top = FALSE)
-```
 
 ### Add SingleR Labels to Seurat Object Metadata
 We add the pruned SingleR labels to the Seurat object metadata for visualization.
 ```{r add-labels-metadata, echo=TRUE, message=FALSE, warning=FALSE}
-rownames(ct_ann)[1:2] # verify cell IDs
+#rownames(ct_ann)[1:2] # verify cell IDs
 Merged_sam <- AddMetaData(Merged_sam, ct_ann$pruned.labels, col.name = 'SingleR_HCA')
 ```
 
@@ -268,7 +256,9 @@ Merged_sam <- AddMetaData(Merged_sam, ct_ann$pruned.labels, col.name = 'SingleR_
 Merged_sam <- SetIdent(Merged_sam, value = "SingleR_HCA")
 DimPlot(Merged_sam, label = TRUE, repel = TRUE, label.size = 3) + NoLegend()
 ```
+
 ## Session Info
 ```{r session-info, echo=FALSE}
 sessioninfo::session_info()
 ```
+
