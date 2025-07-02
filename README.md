@@ -1,101 +1,128 @@
-# scRNAseq_Tutorial
+# scRNAseq_Tutorial  
 
 ## Overview  
-This repository contains an R Markdown-based tutorial workflow for single-cell RNA sequencing (scRNA-seq) data analysis. The workflow covers key steps such as quality control, normalization, batch effect correction using Harmony, clustering, and cell type annotation using SingleR.
+This repository contains an **R Markdown-based tutorial workflow** for single-cell RNA sequencing (scRNA-seq) data analysis.
 
-The tutorial is designed to guide users through a reproducible scRNA-seq analysis pipeline built primarily with the Seurat package in R.
+**scRNA-seq** is a powerful technique that enables the profiling of gene expression at the resolution of individual cells, offering insights into cellular heterogeneity, development, and disease mechanisms. For a deeper introduction, see:  
+👉 [Single-cell transcriptomics: a review of applications and future perspectives (Haque et al., *Genome Medicine* 2017)](https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-017-0467-4)
 
-## About This Workflow
+The workflow covers key steps such as:
+- quality control (QC)
+- normalization
+- batch effect correction (using **Harmony**)
+- clustering
+- cell type annotation (using **SingleR**)
 
-I developed and integrated this tutorial to create a comprehensive, reproducible scRNA-seq analysis pipeline. While the methods and tools (like Seurat, Harmony, and SingleR) come from publicly available tutorials and resources, this repository represents my own effort to combine these approaches into an end-to-end workflow applied to real single-cell data.
+The tutorial guides users through a **reproducible scRNA-seq analysis pipeline**, built primarily with the **Seurat** package in R.
 
-I adapted, tested, and documented the pipeline to make it user-friendly and practical for students and researchers new to single-cell RNA-seq analysis.
+---
 
-My goal is to provide a clear, well-organized guide that brings together existing tutorials into one cohesive workflow, supporting learning and reproducible research.
+## About This Workflow  
+I developed this tutorial to provide a clear, end-to-end, and reproducible scRNA-seq analysis pipeline. While the tools (Seurat, Harmony, SingleR) come from publicly available resources, this repository represents my effort to integrate, test, and document a cohesive workflow applied to real scRNA-seq data.
 
-If you use or adapt this workflow, please give credit to this repository.
+My goal is to support learning and reproducible research by offering a practical guide for students and researchers new to single-cell RNA-seq analysis.
 
+➡ *If you use or adapt this workflow, please credit this repository.*
+
+---
 
 ## Features  
-- Data Quality Control (QC) and filtering  
-- Data normalization and scaling  
-- Batch effect correction with Harmony integration  
-- Dimensionality reduction (PCA, UMAP)  
-- Clustering of cells  
-- Automated cell type annotation with SingleR  
-- Fully reproducible analysis using R Markdown  
+✅ Data quality control and filtering  
+✅ Data normalization and scaling  
+✅ Batch effect correction using **Harmony**  
+✅ Dimensionality reduction (PCA, UMAP)  
+✅ Cell clustering  
+✅ Automated cell type annotation with **SingleR**  
+✅ Fully reproducible analysis using R Markdown  
+
+---
 
 ## Requirements  
-- R (version >= 4.0)  
-- R packages: Seurat, Harmony, SingleR, and dependencies (see tutorial for details)
+- **R** (version ≥ 4.0)  
+- R packages: `Seurat`, `Harmony`, `SingleR`, and dependencies (see tutorial for installation details)
 
-## Data Source
+---
 
-The dataset used in this tutorial was obtained from a publicly available single-cell RNA-seq study on breast cancer:
+## Data Source  
+This tutorial uses data from:
 
 **Luo L., Yang P., Mastoraki S., et al.**  
 *Single-cell RNA sequencing identifies molecular biomarkers predicting late progression to CDK4/6 inhibition in patients with HR+/HER2- metastatic breast cancer.*  
-**Molecular Cancer**, 2025.  
-PMID: [39955556](https://pubmed.ncbi.nlm.nih.gov/39955556/) | PMCID: [PMC11829392](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11829392/) | DOI: [10.1186/s12943-025-02226-9](https://doi.org/10.1186/s12943-025-02226-9)
+*Molecular Cancer, 2025.*  
+PMID: 39955556 | PMCID: PMC11829392 | DOI: [10.1186/s12943-025-02226-9](https://doi.org/10.1186/s12943-025-02226-9)
 
-The raw data is available through the Gene Expression Omnibus (GEO):  
-**GEO Series Accession**: [GSE262288](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE262288)
+**GEO accession:** [GSE262288](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE262288)
 
-For this tutorial, two samples were used:
-- **GSM8162620** — Patient 3 ascites scRNA-seq sample 1  
-- **GSM8162621** — Patient 3 ascites scRNA-seq sample 2  
+Samples used:
+- GSM8162620 — Patient 3 ascites scRNA-seq sample 1
+- GSM8162621 — Patient 3 ascites scRNA-seq sample 2  
 
-These samples were selected to demonstrate the functionality of the workflow.
+*Note: These samples are treated as biological replicates for this tutorial, regardless of their original experimental context.*
 
-## Data Download
+---
 
-Due to file size limits, the raw scRNA-seq data matrices for samples GSM8162620 and GSM8162621 are **not included** in this repository.
+## Data Download  
+⚠ Due to file size limits, raw data matrices are **not included** in this repository.
 
-Please download the data directly from the Gene Expression Omnibus (GEO) at:
+👉 Download the data directly from GEO:
+- [GSM8162620](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM8162620)
+- [GSM8162621](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM8162621)
 
-- [GSM8162620 - Patient 3 ascites scRNA-seq sample 1](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM8162620)
-- [GSM8162621 - Patient 3 ascites scRNA-seq sample 2](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM8162621)
+💡 Store each sample’s data in its own folder.  
+Each folder should contain the following files (with exact names):
+- `barcodes.tsv.gz`
+- `features.tsv.gz`
+- `matrix.mtx.gz`
 
-For this tutorial, each sample's data should be stored in its own separate folder.
+➡ Ensure the file names match these conventions so the tutorial script can read them correctly. Update the file paths in `tutorial.Rmd` if your folder structure differs.
 
-**Note:** You can organize these folders as you prefer, but make sure to update the file paths accordingly in the `tutorial.Rmd` script before running the analysis.
-**Also:** For the purposes of this tutorial, these two samples are treated as biological replicates, regardless of their original experimental context.
-
+---
 ## How to Use  
-1. Clone or download this repository.  
-2. Open `tutorial.Rmd` in RStudio.  
-3. Follow the code chunks and comments to run the analysis step-by-step.  
-4. Install any missing packages as prompted.
 
-## Acknowledgments
+### 1️⃣ Clone or download this repository  
 
-This tutorial was developed by adapting and integrating several excellent publicly available resources, including:  
+#### MacOS / Linux (using Terminal)  
+If you have **Git** installed:  
+```bash
+git clone https://github.com/Harshitha-MI/scRNAseq_Tutorial.git
+Alternatively, download and unzip:
+wget https://github.com/Harshitha-MI/scRNAseq_Tutorial/archive/refs/heads/main.zip
+unzip main.zip  
+2️⃣ Open `tutorial.Rmd` in RStudio.  
+3️⃣ Follow the code chunks and comments step-by-step.  
+4️⃣ Install any missing packages as prompted.
 
-- [Seurat PBMC 3k Tutorial](https://satijalab.org/seurat/articles/pbmc3k_tutorial.html) for the initial QC, normalization, and clustering steps.  
-- [Harmony vignette for Seurat](https://cran.r-project.org/web/packages/harmony/vignettes/Seurat.html) for batch effect correction using Harmony.  
-- [SingleR Tutorial by BioStatSquid](https://biostatsquid.com/singler-tutorial/) for automated cell type annotation.
+---
 
-I thank these authors for making their work openly accessible, which helped me build this integrated workflow.
-Thanks to AI assistance for brainstorming and polishing ideas
+## Acknowledgments  
+This tutorial integrates concepts from:
+- Seurat PBMC 3k Tutorial (QC, normalization, clustering)
+- Harmony vignette for Seurat (batch correction)
+- SingleR Tutorial by BioStatSquid (cell type annotation)
+
+Thanks to these authors for making their work publicly available. I also thank AI tools that assisted with brainstorming and polishing ideas.
+
+---
 
 ## License  
-This tutorial is licensed under the [MIT License](LICENSE). You are free to use, modify, and distribute this work, provided appropriate credit is given to the author.  
+This tutorial is licensed under the **MIT License**. You are free to use, modify, and distribute this work with appropriate credit to the author.
+
+---
 
 ## Citation  
-This workflow and tutorial were developed by Sai Harshitha Muddamsetty, 2025. Please cite or credit this repository if you use or adapt this work in your research or teaching.
-
----
-## Contact
-
-For questions, feedback, or collaboration, feel free to reach out:
-
-- Email: harshithamuddamsetty@gamil.com  
-- GitHub: [Harshitha-MI](https://github.com/Harshitha-MI)
-
-If you have questions or feedback, please feel free to open an issue or contact me.
+This workflow was developed by **Sai Harshitha Muddamsetty, 2025**.  
+➡ Please cite or credit this repository if you use or adapt this work in your research or teaching.
 
 ---
 
-**Happy analyzing!**  
-Harshitha
+## Contact  
+📧 harshithamuddamsetty@gmail.com  
+🐙 [GitHub: Harshitha-MI](https://github.com/Harshitha-MI)
+
+If you have feedback or questions, feel free to [open an issue](https://github.com/Harshitha-MI/scRNAseq_Tutorial/issues) or contact me.
+
+---
+
+🌟 *Happy analyzing!*
+
 
