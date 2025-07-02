@@ -76,7 +76,7 @@ Each folder should contain the following files (with exact names):
 
 ➡ Ensure the file names match these conventions so the tutorial script can read them correctly. Update the file paths in `tutorial.Rmd` if your folder structure differs.
 
----
+
 ## How to Use  
 
 ### 1️⃣ Clone or download this repository  
@@ -86,43 +86,41 @@ If you have **Git** installed:
 ```bash
 git clone https://github.com/Harshitha-MI/scRNAseq_Tutorial.git
 Alternatively, download and unzip:
+
 wget https://github.com/Harshitha-MI/scRNAseq_Tutorial/archive/refs/heads/main.zip
-unzip main.zip  
-2️⃣ Open `tutorial.Rmd` in RStudio.  
-3️⃣ Follow the code chunks and comments step-by-step.  
-4️⃣ Install any missing packages as prompted.
+unzip main.zip
+Windows
 
----
+If you have Git Bash, use the same git clone command as above.
+Or download the ZIP directly from GitHub and extract it using File Explorer.
+2️⃣ Open tutorial.Rmd in RStudio
+3️⃣ Follow the code chunks and comments step-by-step
+4️⃣ Install any missing packages as prompted
+Acknowledgments
 
-## Acknowledgments  
 This tutorial integrates concepts from:
-- Seurat PBMC 3k Tutorial (QC, normalization, clustering)
-- Harmony vignette for Seurat (batch correction)
-- SingleR Tutorial by BioStatSquid (cell type annotation)
 
+Seurat PBMC 3k Tutorial (QC, normalization, clustering)
+Harmony vignette for Seurat (batch correction)
+SingleR Tutorial by BioStatSquid (cell type annotation)
 Thanks to these authors for making their work publicly available. I also thank AI tools that assisted with brainstorming and polishing ideas.
 
----
+License
 
-## License  
-This tutorial is licensed under the **MIT License**. You are free to use, modify, and distribute this work with appropriate credit to the author.
+This tutorial is licensed under the MIT License. You are free to use, modify, and distribute this work with appropriate credit to the author.
 
----
+Citation
 
-## Citation  
-This workflow was developed by **Sai Harshitha Muddamsetty, 2025**.  
+This workflow was developed by Sai Harshitha Muddamsetty, 2025.
 ➡ Please cite or credit this repository if you use or adapt this work in your research or teaching.
 
----
+Contact
 
-## Contact  
-📧 harshithamuddamsetty@gmail.com  
-🐙 [GitHub: Harshitha-MI](https://github.com/Harshitha-MI)
+📧 harshithamuddamsetty@gmail.com
+🐙 GitHub: Harshitha-MI
 
-If you have feedback or questions, feel free to [open an issue](https://github.com/Harshitha-MI/scRNAseq_Tutorial/issues) or contact me.
+If you have feedback or questions, feel free to open an issue or contact me.
 
----
-
-🌟 *Happy analyzing!*
+🌟 Happy analyzing!
 
 
