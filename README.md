@@ -95,9 +95,9 @@ unzip main.zip
 If you have Git Bash, use the same git clone command as above.
 Or download the ZIP directly from GitHub and extract it using File Explorer.
 
-2️⃣ Open tutorial.Rmd in RStudio
-3️⃣ Follow the code chunks and comments step-by-step
-4️⃣ Install any missing packages as prompted
+### 2️⃣ Open tutorial.Rmd in RStudio
+### 3️⃣ Follow the code chunks and comments step-by-step
+### 4️⃣ Install any missing packages as prompted
 
 ## Acknowledgments  
 This tutorial integrates concepts from:
